@@ -1,0 +1,21 @@
+<div class="container my-5">
+    <div class="row justify-content-between p-3">
+        <div class="col-md-6 mb-4" *ngFor="let restaurant of restaurantes">
+            <div (click)="prueba()" class="card">
+                <div class="row no-gutters">
+                    <div class="col-md-4 p-3">
+                        <img [src]="restaurant.img" class="card-img">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title"> {{restaurant.nombre}}</h5>
+                            <p class="card-text"> {{restaurant.descripcion}}</p>
+                            <p class="card-text"><small class="text-muted"> {{restaurant.direccion}} </small></p>
+                            <p class="card-text"><small class="text-muted"> {{restaurant.telefono}} </small></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
