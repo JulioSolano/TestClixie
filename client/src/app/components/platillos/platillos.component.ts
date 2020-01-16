@@ -5,6 +5,8 @@ import { ActivatedRoute, ɵEmptyOutletComponent } from '@angular/router';
 import { Ordenes } from 'src/app/interfaces/ordenes';
 import { RestaurantesService } from '../../services/restaurantes.service';
 import { Restaurantes } from 'src/app/interfaces/restaurantes';
+import { OrdenesService } from '../../services/ordenes.service';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-platillos',
@@ -31,6 +33,7 @@ export class PlatillosComponent implements OnInit {
     private platillosService: PlatillosService,
     private route: ActivatedRoute,
     private restauranteService: RestaurantesService,
+    private ordenService: OrdenesService
   ) { }
 
   ngOnInit() {
@@ -105,7 +108,15 @@ export class PlatillosComponent implements OnInit {
   }
 
   saveOrden() {
-
+    this.orden.items = JSON.stringify(this.items);
+    this.orden.fecha = 'sagarsg';
+    console.log(this.orden);
+    this.ordenService.create(this.orden).subscribe(
+      res => {
+        Swal.fire('Compra realizada', 'Tu orden llegara pronto', 'success');
+      },
+      err => console.log('error: ', err)
+    );
   }
 
 

@@ -1,8 +1,8 @@
 export interface Ordenes {
     id?:number;
-    fecha?:Date;
-    iva?:number;
+    items?:string;
     subtotal?:number;
     total?:number;
-    items?:string;
+    iva?:number;
+    fecha?:string;
 }

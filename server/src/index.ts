@@ -24,6 +24,7 @@ class Server{
     router(): void {
         this.app.use('/api/restaurantes', restRoutes);
         this.app.use('/api/platillos', platRoutes);
+        this.app.use('/api/ordenes', platRoutes);
     }
 
     start():void{

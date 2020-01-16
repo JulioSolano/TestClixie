@@ -23,6 +23,7 @@ class Server {
     router() {
         this.app.use('/api/restaurantes', restRoutes_1.default);
         this.app.use('/api/platillos', platRoutes_1.default);
+        this.app.use('/api/ordenes', platRoutes_1.default);
     }
     start() {
         this.app.listen(this.app.get('port'), () => {
