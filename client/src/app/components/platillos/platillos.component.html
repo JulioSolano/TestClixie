@@ -18,6 +18,7 @@
             </div>
         </div>
         <div class=" col ">
+            <span *ngIf="qtyBg !==0 " class="badge badge-pill badge-warning text-white float-right">{{qtyBg}}</span>
             <img data-toggle="modal" data-target="#exampleModalCenter" height="50" class="float-right" src="../../../assets/cart.svg">
         </div>
     </div>
@@ -34,7 +35,7 @@
               </button>
             </div>
             <div class="modal-body">
-                <ul class="list-group mb-3" >
+                <ul class="list-group mb-3">
                     <li class="list-group-item" *ngFor="let orden of items">
                         <div class="media">
                             <img [src]="orden.urlFoto" height="50" class="align-self-center mr-3" alt="...">
@@ -45,23 +46,27 @@
                             </div>
                         </div>
                     </li>
-                  </ul>
-                  <div class="row justify-content-end">
-                      <div class="col-md-6">
-                        <div class="card">
+                </ul>
+                <div class="row justify-content-end">
+                    <div class="col-md-6">
+                        <div *ngIf="qtyBg !== 0; else empty" class="card">
                             <div class="card-body">
                                 <p class="text-right">Subtotal: {{orden.subtotal | currency }}</p>
                                 <p class="text-right">Iva: {{orden.iva | currency }}</p>
                                 <p class="text-right">Total: {{orden.total | currency }} </p>
                             </div>
-                          </div>
-                      </div>
-                  </div>
+                        </div>
+                    </div>
+                </div>
+
+                <ng-template #empty>
+                    No tienes productos agregados
+                </ng-template>
+
             </div>
-            <div class="row"></div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
-              <button type="button" (click)="saveOrden()" class="btn btn-primary">Guardar Orden</button>
+              <button type="button" (click)="payOrden()" class="btn btn-primary">Ordenar</button>
             </div>
           </div>
         </div>
@@ -79,7 +84,24 @@
              </div>
         </div>
         <div class="col-9">
+            <!-- Agregar Platillo -->
+            <div class="row justify-content-between mb-3">
+                <div class="col-md-4">
+                    <button (click)="role()" class="btn btn-outline-danger btn-sm  mr-3">
+                        {{admin?"Admin":"Cliente"}}
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#staticBackdrop"
+                        *ngIf="admin">Agregar platillo</button>
+                </div>
+            </div>
+
+
           <div class="tab-content row  " id="nav-tabContent">
+
+
+
             <div class="col-md-4 mb-4 animated fadeIn fast" *ngFor="let platillo of platillos | filter: categoria">
                 <div  class="card">
                     <div class="row no-gutters">
@@ -87,9 +109,9 @@
                             <img [src]="platillo.urlFoto" class="card-img ">
                         </div>
                         <div class="col-md-8 ">
+
                             <div class="card-body ">
-                                <h5 class="card-title"> {{platillo.nombre | slice:0:17}}</h5>
-                                <!-- <p class="card-text"> {{platillo.descripcion}}</p> -->
+                                <h5 class="card-title"> {{platillo.nombre }}</h5>
                                 <p class="card-text"><small class="text-muted"> {{platillo.categoria}} </small></p>
                                 <div class="form-group">
                                     <select class="form-control-sm" name="cantidad" id="cantidad" (change)="changeQty($event.target.value)">
@@ -98,7 +120,14 @@
                                     </div>
                                 <label class="card-text">{{platillo.precio | currency }}</label>
 
-                                <button (click)="addCart(platillo)" type="button" class="btn btn-outline-success btn-sm ml-5">agregar +</button>
+                                <button *ngIf="!admin; else erase" (click)="addCart(platillo)" type="button" class="btn btn-outline-success btn-sm ml-5 float-right">
+                                    +
+                                </button>
+                                <ng-template #erase>
+                                    <button  (click)="delete(platillo.id)" type="button" class="btn btn-outline-danger btn-sm ml-5 float-right">
+                                        -
+                                    </button>
+                                </ng-template>
                             </div>
                         </div>
                     </div>
@@ -107,4 +136,62 @@
 
         </div>
       </div>
+
+       <!-- Modal agregar platillo -->
+    <div class="modal fade" id="staticBackdrop" data-backdrop="static" tabindex="-1" role="dialog"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Formulario de platillo</h5>
+                    <button type="button" class="close" #btnClose data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form>
+
+                    <div class="modal-body">
+
+                        <div class="form-group">
+                            <label for="nombre">Nombre: </label>
+                            <input type="text" name="nombre" [(ngModel)]="platillo.nombre" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="categoria">Categoria</label>
+                            <select name="categoria" [(ngModel)]="platillo.categoria" class="form-control"
+                                id="exampleFormControlSelect2">
+                                <option selected value="entradas">Entradas</option>
+                                <option value="sopas y ensaladas">Sopas y ensaladas</option>
+                                <option value="postres">Postres</option>
+                                <option value="bebidas">Bebidas</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="descripcion">Descripcion: </label>
+                            <textarea class="form-control" name="descripcion" [(ngModel)]="platillo.descripcion"
+                                rows="3"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="precio">Precio: </label>
+                            <input type="text" name="precio" [(ngModel)]="platillo.precio" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="urlFoto">Foto: </label>
+                            <input type="text" name="urlFoto" [(ngModel)]="platillo.urlFoto" class="form-control">
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary"  data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" (click)="create()">Agregar</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+
 </div>

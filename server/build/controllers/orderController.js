@@ -42,7 +42,7 @@ class OrderControllers {
         return __awaiter(this, void 0, void 0, function* () {
             yield database_1.default.query('INSERT INTO ordenes SET ?', req.body, (err, result) => {
                 if (err)
-                    res.json(err);
+                    throw err;
                 res.json({ message: 'orden  agregado' });
             });
         });

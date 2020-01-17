@@ -22,7 +22,7 @@ class OrderControllers {
     }
     public async create(req: Request, res: Response) {
         await pool.query('INSERT INTO ordenes SET ?', req.body, (err, result) => {
-            if(err)  res.json(err);
+            if(err)  throw err;
             res.json({message:'orden  agregado'});
         })
     }

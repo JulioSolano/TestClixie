@@ -23,7 +23,7 @@ export class PlatillosService {
   }
 
   delete(id) {
-    return this.http.delete(`${this.api_url}/${id}`);
+    return this.http.delete<any>(`${this.api_url}/${id}`);
   }
 
 

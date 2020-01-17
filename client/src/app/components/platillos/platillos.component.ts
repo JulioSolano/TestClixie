@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { PlatillosService } from '../../services/platillos.service';
 import { Platillos } from 'src/app/interfaces/platillos';
 import { ActivatedRoute, ɵEmptyOutletComponent } from '@angular/router';
@@ -15,17 +15,22 @@ import Swal from 'sweetalert2';
 })
 export class PlatillosComponent implements OnInit {
 
+  @ViewChild('btnClose', {static:false})btnClose:ElementRef;
+
   platillos: Platillos[];
+  platillo: Platillos= {};
   orden:Ordenes={};
 
   idRest: string;
   categoria:string='';
+  admin:boolean= false;
 
   items:any[]=[];
-
+  qtyBg:number = 0;
   qty:number=1;
   total:number = 0;
   taxes:number;
+
 
   restaurante: Restaurantes = {};
 
@@ -63,6 +68,53 @@ export class PlatillosComponent implements OnInit {
     );
   }
 
+  create() {
+    this.platillo.idRestaurante = parseInt(this.idRest);
+    this.platillosService.create(this.platillo).subscribe(
+      res => {
+        Swal.fire('Agregado', 'Tu platillo ha sido agregado', 'success');
+        this.getPlatillos();
+        this.btnClose.nativeElement.click();
+      },
+      err => console.log('error: ', err)
+    );
+
+  }
+
+  update() {
+
+  }
+
+  delete(id:any) {
+    Swal.fire({
+      title:'Eliminar',
+      text:'¿Desea eliminar este platillo?',
+      icon:'question',
+      cancelButtonText:'Cancelar',
+      cancelButtonColor:'#e21212',
+      showCancelButton:true,
+      confirmButtonText:'Aceptar',
+
+    }).then((result) => {
+      if(result.value) {
+        this.platillosService.delete(id).subscribe(
+          res => {
+            Swal.fire('Eliminado', res.message, 'success');
+            this.getPlatillos();
+          },
+          err => {
+            console.log(err);
+          }
+        );
+      }
+    });
+
+  }
+
+  role() {
+    this.admin = !this.admin;
+  }
+
   filtrar(value:string) {
     this.categoria = value;
   }
@@ -97,8 +149,10 @@ export class PlatillosComponent implements OnInit {
 
   calcCostos() {
     this.orden.subtotal = 0;
+    this.qtyBg =0;
     this.items.forEach(element => {
       this.orden.subtotal = this.orden.subtotal + parseFloat(element.subTotal);
+      this.qtyBg = this.qtyBg + element.qty;
     });
     this.orden.iva = this.orden.subtotal * 0.16;
     this.orden.iva = parseFloat(this.orden.iva.toFixed(3));
@@ -107,9 +161,8 @@ export class PlatillosComponent implements OnInit {
     console.log(this.orden);
   }
 
-  saveOrden() {
+  payOrden() {
     this.orden.items = JSON.stringify(this.items);
-    this.orden.fecha = 'sagarsg';
     console.log(this.orden);
     this.ordenService.create(this.orden).subscribe(
       res => {

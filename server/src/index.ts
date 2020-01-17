@@ -4,6 +4,7 @@ import morgan from 'morgan';
 
 import restRoutes from './routes/restRoutes';
 import platRoutes from './routes/platRoutes';
+import orderRoutes from './routes/orderRoutes';
 
 class Server{
     public app:Application;
@@ -24,7 +25,7 @@ class Server{
     router(): void {
         this.app.use('/api/restaurantes', restRoutes);
         this.app.use('/api/platillos', platRoutes);
-        this.app.use('/api/ordenes', platRoutes);
+        this.app.use('/api/ordenes', orderRoutes);
     }
 
     start():void{
