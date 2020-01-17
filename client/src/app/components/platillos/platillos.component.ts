@@ -147,6 +147,18 @@ export class PlatillosComponent implements OnInit {
     console.log(this.items);
   }
 
+  deleteItem(orden, index) {
+    if(orden.qty > 1){
+      orden.qty -= 1;
+      console.log(orden);
+    } else {
+      this.items.splice(index,1);
+      console.log(this.items);
+    }
+    this.calcCostos();
+
+  }
+
   calcCostos() {
     this.orden.subtotal = 0;
     this.qtyBg =0;
@@ -160,6 +172,8 @@ export class PlatillosComponent implements OnInit {
     this.orden.total = this.orden.total;
     console.log(this.orden);
   }
+
+
 
   payOrden() {
     this.orden.items = JSON.stringify(this.items);

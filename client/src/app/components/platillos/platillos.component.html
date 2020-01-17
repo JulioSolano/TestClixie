@@ -36,7 +36,7 @@
             </div>
             <div class="modal-body">
                 <ul class="list-group mb-3">
-                    <li class="list-group-item" *ngFor="let orden of items">
+                    <li class="list-group-item" *ngFor="let orden of items; let i=index">
                         <div class="media">
                             <img [src]="orden.urlFoto" height="50" class="align-self-center mr-3" alt="...">
                             <div class="media-body">
@@ -44,12 +44,13 @@
                                 <small>Cant: {{ orden.qty }}</small> <br>
                                 {{ orden.precio | currency }}
                             </div>
+                            <button (click)="deleteItem(orden, i)" class="btn btn-outline-danger btn-sm">-</button>
                         </div>
                     </li>
                 </ul>
-                <div class="row justify-content-end">
+                <div class="row justify-content-end" *ngIf="qtyBg !== 0; else empty" >
                     <div class="col-md-6">
-                        <div *ngIf="qtyBg !== 0; else empty" class="card">
+                        <div class="card">
                             <div class="card-body">
                                 <p class="text-right">Subtotal: {{orden.subtotal | currency }}</p>
                                 <p class="text-right">Iva: {{orden.iva | currency }}</p>
@@ -58,13 +59,18 @@
                         </div>
                     </div>
                 </div>
-
                 <ng-template #empty>
-                    No tienes productos agregados
+                    <div class="row ">
+                        <div class="col text-center">
+                            No hay productos agregados
+                        </div>
+                    </div>
                 </ng-template>
 
+
+
             </div>
-            <div class="modal-footer">
+            <div *ngIf="qtyBg !== 0" class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
               <button type="button" (click)="payOrden()" class="btn btn-primary">Ordenar</button>
             </div>
@@ -92,7 +98,7 @@
                     </button>
                 </div>
                 <div class="col-md-2">
-                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#staticBackdrop"
+                    <button type="button" class="btn btn-outline-success btn-sm" data-toggle="modal" data-target="#staticBackdrop"
                         *ngIf="admin">Agregar platillo</button>
                 </div>
             </div>
